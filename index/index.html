@@ -1104,10 +1104,9 @@
 
         // Countdown Timer
         function updateCountdown() {
+            // Set end date to June 8, 2025 (3 days from current date)
+            const endDate = new Date(2025, 5, 8, 23, 59, 59);
             const now = new Date();
-            const endDate = new Date();
-            endDate.setDate(now.getDate() + 2);
-            endDate.setHours(23, 59, 59, 0);
             
             const timeLeft = endDate - now;
             
@@ -1129,6 +1128,10 @@
             document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
             document.getElementById('countdown-seconds').textContent = seconds.toString().padStart(2, '0');
         }
+
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
         // Dynamic Stock Counter
         function updateStock() {
@@ -1154,6 +1157,9 @@
                 }
             }, 20000);
         }
+        
+        // Initialize stock counter
+        updateStock();
         
         // Intersection Observer for Animations
         const observerOptions = {
@@ -1184,4 +1190,52 @@
                 if (scrollTop > 500) {
                     banner.classList.add('show');
                     
-                    if (
+                    if (scrollTop < lastScrollTop) {
+                        banner.classList.add('show');
+                    }
+                } else {
+                    banner.classList.remove('show');
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        }
+        
+        // Initialize sticky banner
+        handleStickyBanner();
+        
+        // Update counter numbers with animation
+        function animateCounter(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            const range = end - start;
+            const increment = end > start ? 1 : -1;
+            const stepTime = Math.abs(Math.floor(duration / range));
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (elementId === 'stat-rating') {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = current + (elementId === 'stat-customers' || elementId === 'stat-sold' ? '+' : '');
+                }
+                
+                if (current == end) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+        
+        // Initialize all animations when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            // Initialize counters
+            setTimeout(() => {
+                animateCounter('stat-customers', 0, 1200, 2000);
+                animateCounter('stat-rating', 0, 4.9, 1500);
+                animateCounter('stat-sold', 0, 3500, 2500);
+                animateCounter('stat-cities', 0, 34, 1000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
